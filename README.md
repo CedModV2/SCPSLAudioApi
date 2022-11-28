@@ -34,14 +34,14 @@ public static CustomAudioPlayer Get(ReferenceHub hub)
     {
         if (player is CustomAudioPlayer cplayer1)
             return cplayer1;
-        }
-
-        var cplayer = hub.gameObject.AddComponent<CustomAudioPlayer>();
-        cplayer.Owner = hub;
-
-        AudioPlayers.Add(hub, cplayer);
-        return cplayer;
     }
+
+    var cplayer = hub.gameObject.AddComponent<CustomAudioPlayer>();
+    cplayer.Owner = hub;
+
+    AudioPlayers.Add(hub, cplayer);
+    return cplayer;
+}
 ```
 
 **Note:** For Urls to work you must set AllowUrl to true on the AudioPlayerBase instance.
