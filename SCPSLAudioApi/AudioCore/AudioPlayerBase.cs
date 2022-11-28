@@ -94,6 +94,11 @@ namespace SCPSLAudioApi.AudioCore
         /// </summary>
         public bool LogDebug = false;
 
+        /// <summary>
+        /// Of not empty, the audio will only be sent to players with the PlayerIds in this list
+        /// </summary>
+        public List<int> BroadcastTo = new List<int>();
+
         #endregion
         
         /// <summary>
@@ -307,7 +312,7 @@ namespace SCPSLAudioApi.AudioCore
                 
                 foreach (var plr in ReferenceHub.AllHubs)
                 {
-                    if (plr.connectionToClient == null) continue;
+                    if (plr.connectionToClient == null || (BroadcastTo.Count >= 1 && !BroadcastTo.Contains(plr.PlayerId))) continue;
                     
                     plr.connectionToClient.Send(new VoiceMessage(Owner, VoiceChat.VoiceChatChannel.Intercom, EncodedBuffer, dataLen, false));
                 }
