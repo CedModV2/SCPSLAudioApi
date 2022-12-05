@@ -23,7 +23,7 @@ Simply Create a Dummyplayer (Not included in the library) and Call AudioPlayerBa
 
 (You will need to create a cusom NetworkConnection for a fake player)
 
-```
+```csharp
 public class FakeConnection : NetworkConnectionToClient
 {
     public FakeConnection(int connectionId) : base(connectionId, false, 0f)
@@ -49,7 +49,7 @@ public class FakeConnection : NetworkConnectionToClient
 
 then, you can spawn a fake player like this
 
-````
+```csharp
 var newPlayer = UnityEngine.Object.Instantiate(NetworkManager.singleton.playerPrefab);
 var fakeConnection = new FakeConnection(id);
 var hubPlayer = newPlayer.GetComponent<ReferenceHub>();
