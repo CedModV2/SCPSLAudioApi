@@ -45,7 +45,8 @@ public class FakeConnection : NetworkConnectionToClient
     public override void Disconnect()
     {
     }
-}```
+}
+```
 
 then, you can spawn a fake player like this
 
