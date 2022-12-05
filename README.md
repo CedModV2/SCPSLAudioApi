@@ -21,6 +21,42 @@ When audio is in the queue, call the Play method and after the file has been loa
 ### With a Custom AudioPlayer class
 Simply Create a Dummyplayer (Not included in the library) and Call AudioPlayerBase.Get() on the ReferenceHub of this DummyPlayer.
 
+(You will need to create a cusom NetworkConnection for a fake player)
+
+```
+public class FakeConnection : NetworkConnectionToClient
+{
+    public FakeConnection(int connectionId) : base(connectionId, false, 0f)
+    {
+            
+    }
+
+    public override string address
+    {
+        get
+        {
+            return "localhost";
+        }
+    }
+
+    public override void Send(ArraySegment<byte> segment, int channelId = 0)
+    {
+    }
+    public override void Disconnect()
+    {
+    }
+}```
+
+then, you can spawn a fake player like this
+
+````
+var newPlayer = UnityEngine.Object.Instantiate(NetworkManager.singleton.playerPrefab);
+var fakeConnection = new FakeConnection(id);
+var hubPlayer = newPlayer.GetComponent<ReferenceHub>();
+NetworkServer.AddPlayerForConnection(fakeConnection, newPlayer);
+```
+Then you can use the player like you would with any, eg spawn it, teleport it
+
 Custom AudioPlayer classes work the same way as a normal AudioPlayerBase, the developer can change whatever they feel like in the methods for playing and broadcasting.
 Refer to the source of AudioPlayerBase to see what each method does.
 
