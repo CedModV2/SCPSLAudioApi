@@ -95,9 +95,14 @@ namespace SCPSLAudioApi.AudioCore
         public bool LogDebug = false;
 
         /// <summary>
-        /// Of not empty, the audio will only be sent to players with the PlayerIds in this list
+        /// If not empty, the audio will only be sent to players with the PlayerIds in this list
         /// </summary>
         public List<int> BroadcastTo = new List<int>();
+
+        /// <summary>
+        /// Gets or Sets the Channel where audio will be played in
+        /// </summary>
+        public VoiceChatChannel BroadcastChannel { get; set; } = VoiceChatChannel.Proximity;
 
         #endregion
         
@@ -299,7 +304,7 @@ namespace SCPSLAudioApi.AudioCore
                     PlaybackBuffer.Write(StreamBuffer.Dequeue() * (Volume / 100f));
                 }
             }
-            
+
             if (LogDebug)
                 Log.Debug($"2 {toCopy} {allowedSamples} {samplesPerSecond} {StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
             
@@ -314,7 +319,7 @@ namespace SCPSLAudioApi.AudioCore
                 {
                     if (plr.connectionToClient == null || (BroadcastTo.Count >= 1 && !BroadcastTo.Contains(plr.PlayerId))) continue;
                     
-                    plr.connectionToClient.Send(new VoiceMessage(Owner, VoiceChat.VoiceChatChannel.Intercom, EncodedBuffer, dataLen, false));
+                    plr.connectionToClient.Send(new VoiceMessage(Owner, BroadcastChannel, EncodedBuffer, dataLen, false));
                 }
             }
         }
