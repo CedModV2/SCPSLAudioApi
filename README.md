@@ -92,3 +92,4 @@ Pausing - `AudioPlayerBase::ShouldPlay` \
 Play From URL - `AudioPlayerBase::AllowUrl` \
 Play to specific players only (Will play to everyone if the list is Empty) - `AudioPlayerBase::BroadcastTo` \
 Debug logs (can cause spam) - `AudioPlayerBase::LogDebug`
+AudioChannel - `AudioPlayerBase::BroadcastChannel` \
