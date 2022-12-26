@@ -21,7 +21,7 @@ namespace SCPSLAudioApi.AudioCore
         #region Internal
         
         public const int HeadSamples = 1920;
-        public static OpusEncoder Encoder { get; } = new OpusEncoder(VoiceChat.Codec.Enums.OpusApplicationType.Voip);
+        public OpusEncoder Encoder { get; } = new OpusEncoder(VoiceChat.Codec.Enums.OpusApplicationType.Voip);
         public PlaybackBuffer PlaybackBuffer { get; } = new PlaybackBuffer();
         public byte[] EncodedBuffer { get; } = new byte[512];
         public bool stopTrack = false;
