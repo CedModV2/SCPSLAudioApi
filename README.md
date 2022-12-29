@@ -12,7 +12,7 @@ Note: This is **NOT** an audioplayer plugin, this is a library to make creating 
 ## Developer Usage
 The Library mainly consists of the AudioPlayerBase class, which can be inherited in combination with overriding Methods to create custom logic while still having the heavy lifting done by the Api.
 
-Note: In order for the Library to function properly, you **must** call Startup::SetupDependencies in a function that runs before any interaction with the library, Eg: OnLoad of your plugin.
+Note: In order for the Library to function properly, you **must** call Startup::SetupDependencies in a function that runs before any interaction with the library, Eg: OnLoad or OnRegistered of your plugin.
 
 ### Without a custom AudioPlayer class
 Simply Create a Dummyplayer (Not included in the library) and Call AudioPlayerBase.Get() on the ReferenceHub of this DummyPlayer.
