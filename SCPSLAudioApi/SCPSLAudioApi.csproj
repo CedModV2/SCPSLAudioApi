@@ -196,6 +196,7 @@
 
     <ItemGroup>
       <Compile Include="AudioCore\AudioPlayerBase.cs" />
+      <Compile Include="Startup.cs" />
     </ItemGroup>
 
     <ItemGroup>
