@@ -134,9 +134,6 @@ namespace SCPSLAudioApi.AudioCore
             if (PlaybackCoroutine.IsRunning)
                 Timing.KillCoroutines(PlaybackCoroutine);
             PlaybackCoroutine = Timing.RunCoroutine(Playback(queuePos), Segment.FixedUpdate);
-
-            if (Shuffle)
-                AudioToPlay = AudioToPlay.OrderBy(i => Random.value).ToList();
         }
         
         /// <summary>
@@ -172,15 +169,18 @@ namespace SCPSLAudioApi.AudioCore
 
         public virtual IEnumerator<float> Playback(int index)
         {
-            if (Shuffle)
-                AudioToPlay = AudioToPlay.OrderBy(i => Random.value).ToList();
-            CurrentPlay = AudioToPlay[index];
-            AudioToPlay.RemoveAt(index);
-            if (Loop)
+            if (index != -1)
             {
-                AudioToPlay.Add(CurrentPlay);
+                if (Shuffle)
+                    AudioToPlay = AudioToPlay.OrderBy(i => Random.value).ToList();
+                CurrentPlay = AudioToPlay[index];
+                AudioToPlay.RemoveAt(index);
+                if (Loop)
+                {
+                    AudioToPlay.Add(CurrentPlay);
+                }
             }
-            
+
             Log.Info($"Loading Audio");
             if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out Uri result))
             {
