@@ -105,7 +105,23 @@ namespace SCPSLAudioApi.AudioCore
         public VoiceChatChannel BroadcastChannel { get; set; } = VoiceChatChannel.Proximity;
 
         #endregion
+
+        #region Events
         
+        public delegate void TrackSelecting(AudioPlayerBase playerBase, bool directPlay, ref int queuePos);
+        public static event TrackSelecting OnTrackSelecting;
+        
+        public delegate void TrackSelected(AudioPlayerBase playerBase, bool directPlay, int queuePos, ref string track);
+        public static event TrackSelected OnTrackSelected;
+        
+        public delegate void TrackLoaded(AudioPlayerBase playerBase, bool directPlay, int queuePos, string track);
+        public static event TrackLoaded OnTrackLoaded;
+        
+        public delegate void TrackFinished(AudioPlayerBase playerBase, string track, bool directPlay, ref int nextQueuePos);
+        public static event TrackFinished OnFinishedTrack;
+
+        #endregion
+
         /// <summary>
         /// Add or retrieve the AudioPlayerBase instance based on a ReferenceHub instance.
         /// </summary>
@@ -167,8 +183,10 @@ namespace SCPSLAudioApi.AudioCore
             AudioPlayers.Remove(Owner);
         }
 
-        public virtual IEnumerator<float> Playback(int index)
+        public virtual IEnumerator<float> Playback(int position)
         {
+            int index = position;
+            OnTrackSelecting?.Invoke(this, index == -1, ref index);
             if (index != -1)
             {
                 if (Shuffle)
@@ -180,7 +198,7 @@ namespace SCPSLAudioApi.AudioCore
                     AudioToPlay.Add(CurrentPlay);
                 }
             }
-
+            OnTrackSelected?.Invoke(this, index == -1, index, ref CurrentPlay);
             Log.Info($"Loading Audio");
             if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out Uri result))
             {
@@ -253,7 +271,7 @@ namespace SCPSLAudioApi.AudioCore
                 CurrentPlayStream.Dispose();
                 yield break;
             }
-            
+            OnTrackLoaded?.Invoke(this, index == -1, index, CurrentPlay);
             Log.Info($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
             samplesPerSecond = VoiceChatSettings.SampleRate * VoiceChatSettings.Channels;
             //_samplesPerSecond = VorbisReader.Channels * VorbisReader.SampleRate / 5;
@@ -283,15 +301,23 @@ namespace SCPSLAudioApi.AudioCore
             }
             Log.Info($"Track Complete.");
 
+            int nextQueuepos = 0;
             if (Continue && Loop && index == -1)
             {
-                Timing.RunCoroutine(Playback(-1));
+                nextQueuepos = -1;
+                Timing.RunCoroutine(Playback(nextQueuepos));
+                OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
+                yield break;
             }
 
             if (Continue && AudioToPlay.Count >= 1)
             {
-                Timing.RunCoroutine(Playback(0));
+                Timing.RunCoroutine(Playback(nextQueuepos));
+                OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
+                yield break;
             }
+            
+            OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
         }
 
         public virtual void Update()
