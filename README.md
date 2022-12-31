@@ -83,6 +83,15 @@ public static CustomAudioPlayer Get(ReferenceHub hub)
 }
 ```
 
+To start playing audio there are 2 options you can use, using the Queue system, or directly playing.
+to directly play audio, set CurrentPlay to the path or url that you want to play, and call Play(-1).
+Additionally if you want to loop the audio, set Loop to true.
+
+If you wish to play using the Queue system.
+Call Enqueue with the file or url you wish to play.
+then call Play(0); to start playing the first file or url in queue.
+Additionally, setting loop to true will cause the AudioPlayer to add audio to the end of the queue when it starts to play it.
+
 **Note:** For Urls to work you must set AllowUrl to true on the AudioPlayerBase instance.
 
 ### Features:
