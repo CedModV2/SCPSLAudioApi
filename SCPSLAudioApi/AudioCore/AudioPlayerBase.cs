@@ -283,6 +283,11 @@ namespace SCPSLAudioApi.AudioCore
             }
             Log.Info($"Track Complete.");
 
+            if (Continue && Loop && index == -1)
+            {
+                Timing.RunCoroutine(Playback(-1));
+            }
+
             if (Continue && AudioToPlay.Count >= 1)
             {
                 Timing.RunCoroutine(Playback(0));
