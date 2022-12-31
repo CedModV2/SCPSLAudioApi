@@ -213,6 +213,7 @@ namespace SCPSLAudioApi.AudioCore
 
         public virtual IEnumerator<float> Playback(int position)
         {
+            stopTrack = false;
             int index = position;
             OnTrackSelecting?.Invoke(this, index == -1, ref index);
             if (index != -1)
@@ -350,7 +351,7 @@ namespace SCPSLAudioApi.AudioCore
 
         public virtual void Update()
         {
-            if (Owner == null || !ready || StreamBuffer.Count == 0) return;
+            if (Owner == null || !ready || StreamBuffer.Count == 0 || !ShouldPlay) return;
 
             allowedSamples += Time.deltaTime * samplesPerSecond;
             int toCopy = Mathf.Min(Mathf.FloorToInt(allowedSamples), StreamBuffer.Count);
