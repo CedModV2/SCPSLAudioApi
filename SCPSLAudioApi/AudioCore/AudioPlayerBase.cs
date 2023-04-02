@@ -157,7 +157,7 @@ namespace SCPSLAudioApi.AudioCore
         /// <returns><see cref="AudioPlayerBase"/></returns>
         public static AudioPlayerBase Get(ReferenceHub hub)
         {
-            if (AudioPlayers.TryGetValue(hub, out AudioPlayerBase player))
+            if (AudioPlayers.TryGetValue(hub, out var player))
             {
                 return player;
             }
@@ -214,7 +214,7 @@ namespace SCPSLAudioApi.AudioCore
         public virtual IEnumerator<float> Playback(int position)
         {
             stopTrack = false;
-            int index = position;
+            var index = position;
             OnTrackSelecting?.Invoke(this, index == -1, ref index);
             if (index != -1)
             {
@@ -229,10 +229,10 @@ namespace SCPSLAudioApi.AudioCore
             }
             OnTrackSelected?.Invoke(this, index == -1, index, ref CurrentPlay);
             Log.Info($"Loading Audio");
-            if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out Uri result))
+            if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out var result))
             {
-                UnityWebRequest www = new UnityWebRequest(CurrentPlay, "GET");
-                DownloadHandlerBuffer dH = new DownloadHandlerBuffer();
+                var www = new UnityWebRequest(CurrentPlay, "GET");
+                var dH = new DownloadHandlerBuffer();
                 www.downloadHandler = dH;
             
                 yield return Timing.WaitUntilDone(www.SendWebRequest());
@@ -323,14 +323,14 @@ namespace SCPSLAudioApi.AudioCore
                     ready = true;
                     yield return Timing.WaitForOneFrame;
                 }
-                for (int i = 0; i < ReadBuffer.Length; i++)
+                for (var i = 0; i < ReadBuffer.Length; i++)
                 {
                     StreamBuffer.Enqueue(ReadBuffer[i]);
                 }
             }
             Log.Info($"Track Complete.");
 
-            int nextQueuepos = 0;
+            var nextQueuepos = 0;
             if (Continue && Loop && index == -1)
             {
                 nextQueuepos = -1;
@@ -354,12 +354,12 @@ namespace SCPSLAudioApi.AudioCore
             if (Owner == null || !ready || StreamBuffer.Count == 0 || !ShouldPlay) return;
 
             allowedSamples += Time.deltaTime * samplesPerSecond;
-            int toCopy = Mathf.Min(Mathf.FloorToInt(allowedSamples), StreamBuffer.Count);
+            var toCopy = Mathf.Min(Mathf.FloorToInt(allowedSamples), StreamBuffer.Count);
             if (LogDebug)
                 Log.Debug($"1 {toCopy} {allowedSamples} {samplesPerSecond} {StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
             if (toCopy > 0)
             {
-                for (int i = 0; i < toCopy; i++)
+                for (var i = 0; i < toCopy; i++)
                 {
                     PlaybackBuffer.Write(StreamBuffer.Dequeue() * (Volume / 100f));
                 }
@@ -373,7 +373,7 @@ namespace SCPSLAudioApi.AudioCore
             while (PlaybackBuffer.Length >= 480)
             {
                 PlaybackBuffer.ReadTo(SendBuffer, (long)480, 0L);
-                int dataLen = Encoder.Encode(SendBuffer, EncodedBuffer, 480);
+                var dataLen = Encoder.Encode(SendBuffer, EncodedBuffer, 480);
                 
                 foreach (var plr in ReferenceHub.AllHubs)
                 {
