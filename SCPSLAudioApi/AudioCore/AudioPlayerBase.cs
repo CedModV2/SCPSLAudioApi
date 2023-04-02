@@ -5,6 +5,7 @@ using System.Linq;
 using MEC;
 using NVorbis;
 using PluginAPI.Core;
+using SCPSLAudioApi.Events.Handlers;
 using UnityEngine;
 using UnityEngine.Networking;
 using VoiceChat;
@@ -106,50 +107,6 @@ namespace SCPSLAudioApi.AudioCore
 
         #endregion
 
-        #region Events
-        
-        /// <summary>
-        /// Fired when a track is getting selected.
-        /// </summary>
-        /// <param name="playerBase">The AudioPlayer instance that this event fired for</param>
-        /// <param name="directPlay">If the AudioPlayer was playing Directly (-1 index)</param>
-        /// <param name="queuePos">Position in the Queue of the track that is going to be selected</param>
-        public delegate void TrackSelecting(AudioPlayerBase playerBase, bool directPlay, ref int queuePos);
-        public static event TrackSelecting OnTrackSelecting;
-        
-        /// <summary>
-        /// Fired when a track has been selected
-        /// </summary>
-        /// <param name="playerBase">The AudioPlayer instance that this event fired for</param>
-        /// <param name="directPlay">If the AudioPlayer was playing Directly (-1 index)</param>
-        /// <param name="queuePos">Position in the Queue of the track that will start</param>
-        /// <param name="track">The track the AudioPlayer will play</param>
-        public delegate void TrackSelected(AudioPlayerBase playerBase, bool directPlay, int queuePos, ref string track);
-        public static event TrackSelected OnTrackSelected;
-        
-        
-        /// <summary>
-        /// Fired when a track is loaded and will begin playing.
-        /// </summary>
-        /// <param name="playerBase">The AudioPlayer instance that this event fired for</param>
-        /// <param name="directPlay">If the AudioPlayer was playing Directly (-1 index)</param>
-        /// <param name="queuePos">Position in the Queue that will play</param>
-        /// <param name="track">The track the AudioPlayer will play</param>
-        public delegate void TrackLoaded(AudioPlayerBase playerBase, bool directPlay, int queuePos, string track);
-        public static event TrackLoaded OnTrackLoaded;
-        
-        /// <summary>
-        /// Fired when a track finishes.
-        /// </summary>
-        /// <param name="playerBase">The AudioPlayer instance that this event fired for</param>
-        /// <param name="track">The track the AudioPlayer was playing</param>
-        /// <param name="directPlay">If the AudioPlayer was playing Directly (-1 index)</param>
-        /// <param name="nextQueuePos">Position in the Queue that will play next, can be set to a different value</param>
-        public delegate void TrackFinished(AudioPlayerBase playerBase, string track, bool directPlay, ref int nextQueuePos);
-        public static event TrackFinished OnFinishedTrack;
-
-        #endregion
-
         /// <summary>
         /// Add or retrieve the AudioPlayerBase instance based on a ReferenceHub instance.
         /// </summary>
@@ -215,7 +172,8 @@ namespace SCPSLAudioApi.AudioCore
         {
             stopTrack = false;
             var index = position;
-            OnTrackSelecting?.Invoke(this, index == -1, ref index);
+            Track.InvokeTrackSelectingEvent(this, index == -1, ref index);
+            
             if (index != -1)
             {
                 if (Shuffle)
@@ -227,7 +185,8 @@ namespace SCPSLAudioApi.AudioCore
                     AudioToPlay.Add(CurrentPlay);
                 }
             }
-            OnTrackSelected?.Invoke(this, index == -1, index, ref CurrentPlay);
+            
+            Track.InvokeTrackSelectedEvent(this, index == -1, index, ref CurrentPlay);
             Log.Info($"Loading Audio");
             if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out var result))
             {
@@ -300,8 +259,9 @@ namespace SCPSLAudioApi.AudioCore
                 CurrentPlayStream.Dispose();
                 yield break;
             }
-            OnTrackLoaded?.Invoke(this, index == -1, index, CurrentPlay);
+            Track.InvokeTrackLoadedEvent(this, index == -1, index, CurrentPlay);
             Log.Info($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
+            
             samplesPerSecond = VoiceChatSettings.SampleRate * VoiceChatSettings.Channels;
             //_samplesPerSecond = VorbisReader.Channels * VorbisReader.SampleRate / 5;
             SendBuffer = new float[samplesPerSecond / 5 + HeadSamples];
@@ -335,18 +295,18 @@ namespace SCPSLAudioApi.AudioCore
             {
                 nextQueuepos = -1;
                 Timing.RunCoroutine(Playback(nextQueuepos));
-                OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
+                Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuepos);
                 yield break;
             }
 
             if (Continue && AudioToPlay.Count >= 1)
             {
                 Timing.RunCoroutine(Playback(nextQueuepos));
-                OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
+                Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuepos);
                 yield break;
             }
             
-            OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
+            Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuepos);
         }
 
         public virtual void Update()

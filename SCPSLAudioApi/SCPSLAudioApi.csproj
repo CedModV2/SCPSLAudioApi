@@ -225,6 +225,7 @@
 
     <ItemGroup>
       <Compile Include="AudioCore\AudioPlayerBase.cs" />
+      <Compile Include="Events\Handlers\Track.cs" />
       <Compile Include="Startup.cs" />
     </ItemGroup>
 
@@ -236,6 +237,10 @@
     <ItemGroup>
       <Content Include="FodyWeavers.xml" />
       <Content Include="FodyWeavers.xsd" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Api" />
     </ItemGroup>
 
     <Import Project="..\packages\Fody.6.6.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.6.0\build\Fody.targets')" />
