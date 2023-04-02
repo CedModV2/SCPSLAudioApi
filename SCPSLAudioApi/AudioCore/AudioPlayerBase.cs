@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Exiled.API.Features;
 using MEC;
 using NVorbis;
-using PluginAPI.Core;
 using SCPSLAudioApi.Events.Handlers;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -187,7 +187,8 @@ namespace SCPSLAudioApi.AudioCore
             }
             
             Track.InvokeTrackSelectedEvent(this, index == -1, index, ref CurrentPlay);
-            Log.Info($"Loading Audio");
+            Log.Debug($"Loading Audio");
+            
             if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out var result))
             {
                 var www = new UnityWebRequest(CurrentPlay, "GET");
@@ -260,7 +261,7 @@ namespace SCPSLAudioApi.AudioCore
                 yield break;
             }
             Track.InvokeTrackLoadedEvent(this, index == -1, index, CurrentPlay);
-            Log.Info($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
+            Log.Debug($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
             
             samplesPerSecond = VoiceChatSettings.SampleRate * VoiceChatSettings.Channels;
             //_samplesPerSecond = VorbisReader.Channels * VorbisReader.SampleRate / 5;
@@ -288,25 +289,25 @@ namespace SCPSLAudioApi.AudioCore
                     StreamBuffer.Enqueue(ReadBuffer[i]);
                 }
             }
-            Log.Info($"Track Complete.");
+            Log.Debug($"Track Complete.");
 
-            var nextQueuepos = 0;
+            var nextQueuePos = 0;
             if (Continue && Loop && index == -1)
             {
-                nextQueuepos = -1;
-                Timing.RunCoroutine(Playback(nextQueuepos));
-                Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuepos);
+                nextQueuePos = -1;
+                Timing.RunCoroutine(Playback(nextQueuePos));
+                Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuePos);
                 yield break;
             }
 
             if (Continue && AudioToPlay.Count >= 1)
             {
-                Timing.RunCoroutine(Playback(nextQueuepos));
-                Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuepos);
+                Timing.RunCoroutine(Playback(nextQueuePos));
+                Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuePos);
                 yield break;
             }
             
-            Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuepos);
+            Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuePos);
         }
 
         public virtual void Update()

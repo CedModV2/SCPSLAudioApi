@@ -53,6 +53,9 @@
           <HintPath>..\packages\Costura.Fody.5.8.0-alpha0098\lib\netstandard1.0\Costura.dll</HintPath>
           <Private>True</Private>
         </Reference>
+        <Reference Include="Exiled.Api, Version=6.1.0.0, Culture=neutral, processorArchitecture=Amd64">
+            <HintPath>..\packages\EXILED.6.1.0-beta.2\lib\net48\Exiled.API.dll</HintPath>
+        </Reference>
         <Reference Include="Exiled.CreditTags, Version=6.1.0.0, Culture=neutral, processorArchitecture=Amd64">
           <HintPath>..\packages\EXILED.6.1.0-beta.2\lib\net48\Exiled.CreditTags.dll</HintPath>
         </Reference>
