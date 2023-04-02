@@ -28,22 +28,16 @@ namespace SCPSLAudioApi.AudioCore
             var toCopy = Mathf.Min(Mathf.FloorToInt(allowedSamples), StreamBuffer.Count);
 
             if (VerboseLogs)
-            {
                 Log.Info($"1 {toCopy} {allowedSamples} {samplesPerSecond} " +
-                          $"{StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
-            }
+                         $"{StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
 
             if (toCopy > 0)
-            {
                 for (var i = 0; i < toCopy; i++)
                     PlaybackBuffer.Write(StreamBuffer.Dequeue() * (Volume / 100f));
-            }
 
             if (VerboseLogs)
-            {
                 Log.Info($"2 {toCopy} {allowedSamples} {samplesPerSecond} " +
-                          $"{StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
-            }
+                         $"{StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
 
             allowedSamples -= toCopy;
 
@@ -57,7 +51,7 @@ namespace SCPSLAudioApi.AudioCore
                     if (plr.connectionToClient == null ||
                         (BroadcastTo.Count >= 1 && !BroadcastTo.Contains(plr.PlayerId))) continue;
 
-                    plr.connectionToClient.Send(new VoiceMessage(Owner, BroadcastChannel, 
+                    plr.connectionToClient.Send(new VoiceMessage(Owner, BroadcastChannel,
                         EncodedBuffer, dataLen, false));
                 }
             }
@@ -129,18 +123,18 @@ namespace SCPSLAudioApi.AudioCore
         {
             stopTrack = false;
             var index = position;
-            
+
             Track.InvokeTrackSelectingEvent(this, index == -1, ref index);
 
             if (index != -1)
             {
                 if (Shuffle)
                     AudioToPlay = AudioToPlay.OrderBy(i => Random.value).ToList();
-                
+
                 CurrentPlay = AudioToPlay[index];
                 AudioToPlay.RemoveAt(index);
-                
-                if (Loop) 
+
+                if (Loop)
                     AudioToPlay.Add(CurrentPlay);
             }
 
@@ -160,9 +154,9 @@ namespace SCPSLAudioApi.AudioCore
                     Log.Error($"Failed to retrieve audio {webRequest.responseCode} {webRequest.downloadHandler.text}");
 
                     if (!Continue || AudioToPlay.Count < 1) yield break;
-                    
+
                     yield return Timing.WaitForSeconds(1);
-                    
+
                     if (AudioToPlay.Count >= 1)
                         Timing.RunCoroutine(Playback(0));
 
@@ -179,10 +173,10 @@ namespace SCPSLAudioApi.AudioCore
                     {
                         Log.Error($"Audio file {CurrentPlay} is not valid. Audio files must be ogg files");
                         yield return Timing.WaitForSeconds(1);
-                        
+
                         if (AudioToPlay.Count >= 1)
                             Timing.RunCoroutine(Playback(0));
-                        
+
                         yield break;
                     }
 
@@ -192,10 +186,10 @@ namespace SCPSLAudioApi.AudioCore
                 {
                     Log.Error($"Audio file {CurrentPlay} does not exist. skipping.");
                     yield return Timing.WaitForSeconds(1);
-                    
+
                     if (AudioToPlay.Count >= 1)
                         Timing.RunCoroutine(Playback(0));
-                    
+
                     yield break;
                 }
             }
@@ -207,13 +201,13 @@ namespace SCPSLAudioApi.AudioCore
             {
                 Log.Error($"Audio file {CurrentPlay} is not valid. Audio files must be mono.");
                 yield return Timing.WaitForSeconds(1);
-                
+
                 if (AudioToPlay.Count >= 1)
                     Timing.RunCoroutine(Playback(0));
-                
+
                 VorbisReader.Dispose();
                 CurrentPlayStream.Dispose();
-                
+
                 yield break;
             }
 
@@ -221,13 +215,13 @@ namespace SCPSLAudioApi.AudioCore
             {
                 Log.Error($"Audio file {CurrentPlay} is not valid. Audio files must have a SamepleRate of 48000");
                 yield return Timing.WaitForSeconds(1);
-                
+
                 if (AudioToPlay.Count >= 1)
                     Timing.RunCoroutine(Playback(0));
-                
+
                 VorbisReader.Dispose();
                 CurrentPlayStream.Dispose();
-                
+
                 yield break;
             }
 
@@ -239,7 +233,7 @@ namespace SCPSLAudioApi.AudioCore
             SendBuffer = new float[samplesPerSecond / 5 + HeadSamples];
             ReadBuffer = new float[samplesPerSecond / 5 + HeadSamples];
 
-            while ((VorbisReader.ReadSamples(ReadBuffer, 0, ReadBuffer.Length)) > 0)
+            while (VorbisReader.ReadSamples(ReadBuffer, 0, ReadBuffer.Length) > 0)
             {
                 if (stopTrack)
                 {
@@ -248,7 +242,7 @@ namespace SCPSLAudioApi.AudioCore
                 }
 
                 while (!ShouldPlay) yield return Timing.WaitForOneFrame;
-                
+
                 while (StreamBuffer.Count >= ReadBuffer.Length)
                 {
                     ready = true;
@@ -261,20 +255,20 @@ namespace SCPSLAudioApi.AudioCore
             Log.Debug("Track Complete.");
 
             var nextQueuePos = 0;
-            
+
             switch (Continue)
             {
                 case true when Loop && index == -1:
                     nextQueuePos = -1;
-                
+
                     Timing.RunCoroutine(Playback(nextQueuePos));
                     Track.InvokeFinishedTrackEvent(this, CurrentPlay, false, ref nextQueuePos);
-                
+
                     yield break;
                 case true when AudioToPlay.Count >= 1:
                     Timing.RunCoroutine(Playback(nextQueuePos));
                     Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuePos);
-                
+
                     yield break;
                 default:
                     Track.InvokeFinishedTrackEvent(this, CurrentPlay, index == -1, ref nextQueuePos);
