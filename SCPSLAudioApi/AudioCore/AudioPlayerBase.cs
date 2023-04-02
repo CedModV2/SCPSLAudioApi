@@ -8,7 +8,6 @@ using NVorbis;
 using SCPSLAudioApi.Events.Handlers;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Serialization;
 using VoiceChat;
 using VoiceChat.Codec;
 using VoiceChat.Codec.Enums;
@@ -19,8 +18,7 @@ namespace SCPSLAudioApi.AudioCore
 {
     public class AudioPlayerBase : MonoBehaviour
     {
-        public static Dictionary<ReferenceHub, AudioPlayerBase> AudioPlayers =
-            new Dictionary<ReferenceHub, AudioPlayerBase>();
+        public static Dictionary<ReferenceHub, AudioPlayerBase> AudioPlayers;
 
         public virtual void Update()
         {
@@ -31,7 +29,7 @@ namespace SCPSLAudioApi.AudioCore
 
             if (VerboseLogs)
             {
-                Log.Debug($"1 {toCopy} {allowedSamples} {samplesPerSecond} " +
+                Log.Info($"1 {toCopy} {allowedSamples} {samplesPerSecond} " +
                           $"{StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
             }
 
@@ -43,7 +41,7 @@ namespace SCPSLAudioApi.AudioCore
 
             if (VerboseLogs)
             {
-                Log.Debug($"2 {toCopy} {allowedSamples} {samplesPerSecond} " +
+                Log.Info($"2 {toCopy} {allowedSamples} {samplesPerSecond} " +
                           $"{StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
             }
 
@@ -368,7 +366,7 @@ namespace SCPSLAudioApi.AudioCore
         public bool AllowUrl;
 
         /// <summary>
-        ///     If Debug logs shouldbe shown (Note: can be very spammy)
+        ///     If Vebose logs shouldbe shown (Note: can be very spammy)
         /// </summary>
         public bool VerboseLogs;
 
@@ -376,6 +374,11 @@ namespace SCPSLAudioApi.AudioCore
         ///     If not empty, the audio will only be sent to players with the PlayerIds in this list
         /// </summary>
         public List<int> BroadcastTo = new List<int>();
+
+        static AudioPlayerBase()
+        {
+            AudioPlayers = new Dictionary<ReferenceHub, AudioPlayerBase>();
+        }
 
         /// <summary>
         ///     Gets or Sets the Channel where audio will be played in
