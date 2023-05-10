@@ -3,6 +3,7 @@
     <Costura>
         <IncludeAssemblies>
             NVorbis
+            System.Memory
         </IncludeAssemblies>
     </Costura>
 </Weavers>
