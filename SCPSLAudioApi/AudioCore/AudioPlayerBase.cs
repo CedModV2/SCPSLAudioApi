@@ -61,7 +61,7 @@ namespace SCPSLAudioApi.AudioCore
         {
             if (PlaybackCoroutine.IsValid)
                 Timing.KillCoroutines(PlaybackCoroutine);
-
+            
             AudioPlayers.Remove(Owner);
         }
 
@@ -227,6 +227,7 @@ namespace SCPSLAudioApi.AudioCore
 
             Track.InvokeTrackLoadedEvent(this, index == -1, index, CurrentPlay);
             Log.Debug($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
+            IsPlaying = true;
 
             samplesPerSecond = VoiceChatSettings.SampleRate * VoiceChatSettings.Channels;
             //_samplesPerSecond = VorbisReader.Channels * VorbisReader.SampleRate / 5;
@@ -253,7 +254,8 @@ namespace SCPSLAudioApi.AudioCore
             }
 
             Log.Debug("Track Complete.");
-
+            IsPlaying = false;
+            
             var nextQueuePos = 0;
 
             switch (Continue)
@@ -303,6 +305,8 @@ namespace SCPSLAudioApi.AudioCore
         public float[] SendBuffer { get; set; }
 
         public float[] ReadBuffer { get; set; }
+        
+        public bool IsPlaying { get; private set; }
 
         #endregion
 
