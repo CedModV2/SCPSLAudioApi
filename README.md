@@ -3,6 +3,8 @@
 This is an API Library that does not depend on any Plugin frameworks for its function.
 This API provides a implementation of an Audio player in a SCP:SL Server with options to extend
 
+That API uses EXILED: [Exiled-Team/EXILED](https://github.com/Exiled-Team/EXILED)
+
 ## Installation
 Download the latest release from the [Releases](https://github.com/CedModV2/SCPSLAudioApi/releases/) page and place the SCPSLAudioAPi.dll file in your plugin dependencies folder
 
