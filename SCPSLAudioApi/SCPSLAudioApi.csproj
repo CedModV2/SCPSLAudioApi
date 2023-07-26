@@ -54,7 +54,6 @@
     </Reference>
     <Reference Include="Mirror" HintPath="..\..\..\假人\PluginApiAudio\Lib\Mirror.dll" />
     <Reference Include="mscorlib" />
-    <Reference Include="NorthwoodLib" HintPath="$(SL_REFERENCES)\NorthwoodLib.dll" />
     <Reference Include="NVorbis, Version=0.10.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\NVorbis.0.10.5\lib\net45\NVorbis.dll</HintPath>
       <Private>True</Private>
@@ -188,7 +187,6 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule" HintPath="..\..\..\假人\PluginApiAudio\Lib\UnityEngine.CoreModule.dll" />
     <Reference Include="UnityEngine.PhysicsModule" HintPath="..\..\..\假人\PluginApiAudio\Lib\UnityEngine.PhysicsModule.dll" />
-    <Reference Include="YamlDotNet" HintPath="$(SL_REFERENCES)\YamlDotNet.dll" />
     <Reference Include="PluginAPI" HintPath="..\..\..\假人\PluginApiAudio\Lib\PluginAPI.dll" />
     <Reference Include="UnityEngine.UnityWebRequestModule" HintPath="..\..\..\假人\PluginApiAudio\Lib\UnityEngine.UnityWebRequestModule.dll" />
   </ItemGroup>

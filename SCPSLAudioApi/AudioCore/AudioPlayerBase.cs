@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MEC;
+using Mirror;
 using NVorbis;
 using PluginAPI.Core;
 using UnityEngine;
@@ -159,6 +160,10 @@ namespace SCPSLAudioApi.AudioCore
         /// The audio play is finish.
         /// </summary>
         public bool IsFinish = false;
+        /// <summary>
+        /// when audio play is finished,clear self and fake player.
+        /// </summary>
+        public bool AutoClear = true;
         #endregion
 
         /// <summary>
@@ -219,6 +224,8 @@ namespace SCPSLAudioApi.AudioCore
         {
             if (PlaybackCoroutine.IsValid)
                 Timing.KillCoroutines(PlaybackCoroutine);
+            ReferenceHub.AllHubs.Remove(Owner);
+            NetworkServer.Destroy(Owner.gameObject);
             AudioPlayers.Remove(Owner);
         }
 
@@ -365,6 +372,10 @@ namespace SCPSLAudioApi.AudioCore
 
             IsFinish = true;
             OnFinishedTrack?.Invoke(this, CurrentPlay, index == -1, ref nextQueuepos);
+            if (AutoClear)
+            {
+                OnDestroy();
+            }
         }
 
         public virtual void Update()
