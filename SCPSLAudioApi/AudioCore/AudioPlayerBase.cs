@@ -384,7 +384,7 @@ namespace SCPSLAudioApi.AudioCore
             }
         }
 
-        private bool PlayerIsConnected(Reference hub)
+        private bool PlayerIsConnected(ReferenceHub hub)
         {
             return hub.characterClassManager.InstanceMode != ClientInstanceMode.Unverified && hub.nicknameSync.NickSet;
         }
