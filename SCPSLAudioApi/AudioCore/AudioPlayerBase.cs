@@ -377,11 +377,16 @@ namespace SCPSLAudioApi.AudioCore
                 
                 foreach (var plr in ReferenceHub.AllHubs)
                 {
-                    if (plr.connectionToClient == null || (BroadcastTo.Count >= 1 && !BroadcastTo.Contains(plr.PlayerId))) continue;
+                    if (plr.connectionToClient == null || !PlayerIsConnected(plr) || (BroadcastTo.Count >= 1 && !BroadcastTo.Contains(plr.PlayerId))) continue;
                     
                     plr.connectionToClient.Send(new VoiceMessage(Owner, BroadcastChannel, EncodedBuffer, dataLen, false));
                 }
             }
+        }
+
+        private bool PlayerIsConnected(ReferenceHub hub)
+        {
+            return hub.characterClassManager.InstanceMode == ClientInstanceMode.ReadyClient && hub.nicknameSync.NickSet;
         }
     }
 }
