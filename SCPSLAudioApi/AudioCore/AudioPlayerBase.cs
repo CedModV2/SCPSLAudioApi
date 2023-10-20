@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CentralAuth;
 using MEC;
 using NVorbis;
 using PluginAPI.Core;
@@ -386,7 +387,7 @@ namespace SCPSLAudioApi.AudioCore
 
         private bool PlayerIsConnected(ReferenceHub hub)
         {
-            return hub.characterClassManager.InstanceMode == ClientInstanceMode.ReadyClient && hub.nicknameSync.NickSet;
+            return hub.authManager.InstanceMode == ClientInstanceMode.ReadyClient && hub.nicknameSync.NickSet;
         }
     }
 }
