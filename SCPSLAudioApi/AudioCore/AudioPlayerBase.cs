@@ -430,7 +430,8 @@ namespace SCPSLAudioApi.AudioCore
         {
             return hub.authManager.InstanceMode == ClientInstanceMode.ReadyClient &&
                    hub.nicknameSync.NickSet &&
-                   !string.IsNullOrEmpty(hub.authManager.UserId) && hub.authManager.UserId != null &&
+                   !string.IsNullOrEmpty(hub.authManager.UserId) &&
+                   hub.authManager.UserId != null &&
                    !hub.authManager.UserId.Contains("Dummy");
         }
 
