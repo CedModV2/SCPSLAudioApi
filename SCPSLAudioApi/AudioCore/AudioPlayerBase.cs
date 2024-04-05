@@ -429,12 +429,12 @@ namespace SCPSLAudioApi.AudioCore
         private bool PlayerIsConnected(ReferenceHub hub)
         {
             return hub.authManager.InstanceMode == ClientInstanceMode.ReadyClient &&
-                   hub.nicknameSync.NickSet && 
+                   hub.nicknameSync.NickSet &&
                    !hub.isLocalPlayer &&
                    !string.IsNullOrEmpty(hub.authManager.UserId) &&
-                   hub.authManager.UserId != null &&
                    !hub.authManager.UserId.Contains("Dummy");
         }
+
 
     }
 }
