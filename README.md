@@ -23,7 +23,7 @@ When audio is in the queue, call the Play method and after the file has been loa
 ### With a Custom AudioPlayer class
 Simply Create a Dummyplayer (Not included in the library) and Call AudioPlayerBase.Get() on the ReferenceHub of this DummyPlayer.
 
-(You will need to create a cusom NetworkConnection for a fake player)
+(You will need to create a custom NetworkConnection for a fake player)
 
 ```csharp
 public class FakeConnection : NetworkConnectionToClient
