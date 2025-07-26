@@ -190,7 +190,7 @@
         <Reference Include="UnityEngine.CoreModule" HintPath="$(SL_REFERENCES)\UnityEngine.CoreModule.dll" />
         <Reference Include="UnityEngine.PhysicsModule" HintPath="$(SL_REFERENCES)\UnityEngine.PhysicsModule.dll" />
         <Reference Include="YamlDotNet" HintPath="$(SL_REFERENCES)\YamlDotNet.dll" />
-        <Reference Include="PluginAPI" HintPath="$(SL_REFERENCES)\PluginAPI.dll" />
+        <Reference Include="PluginAPI" HintPath="$(SL_REFERENCES)\LabAPI.dll" />
         <Reference Include="UnityEngine.UnityWebRequestModule" HintPath="$(SL_REFERENCES)\UnityEngine.UnityWebRequestModule.dll" />
     </ItemGroup>
 
