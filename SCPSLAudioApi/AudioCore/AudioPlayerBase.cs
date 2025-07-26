@@ -2,7 +2,6 @@
 using MEC;
 using Mirror;
 using NVorbis;
-using PluginAPI.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +11,7 @@ using UnityEngine.Networking;
 using VoiceChat;
 using VoiceChat.Codec;
 using VoiceChat.Networking;
+using Logger = LabApi.Features.Console.Logger;
 using Random = UnityEngine.Random;
 
 namespace SCPSLAudioApi.AudioCore
@@ -254,8 +254,10 @@ namespace SCPSLAudioApi.AudioCore
             OnTrackSelected?.Invoke(this, index == -1, index, ref CurrentPlay);
 
             if (LogInfo)
-                Log.Info($"Loading Audio");
-
+            {
+                Logger.Info("Loading Audio");
+            }
+            
             if (AllowUrl && Uri.TryCreate(CurrentPlay, UriKind.Absolute, out Uri result))
             {
                 UnityWebRequest www = new UnityWebRequest(CurrentPlay, "GET");
@@ -266,7 +268,7 @@ namespace SCPSLAudioApi.AudioCore
 
                 if (www.responseCode != 200)
                 {
-                    Log.Error($"Failed to retrieve audio {www.responseCode} {www.downloadHandler.text}");
+                    Logger.Error($"Failed to retrieve audio {www.responseCode} {www.downloadHandler.text}");
                     if (Continue && AudioToPlay.Count >= 1)
                     {
                         yield return Timing.WaitForSeconds(1);
@@ -284,7 +286,7 @@ namespace SCPSLAudioApi.AudioCore
                 {
                     if (!CurrentPlay.EndsWith(".ogg"))
                     {
-                        Log.Error($"Audio file {CurrentPlay} is not valid. Audio files must be ogg files");
+                        Logger.Error($"Audio file {CurrentPlay} is not valid. Audio files must be ogg files");
                         yield return Timing.WaitForSeconds(1);
                         if (AudioToPlay.Count >= 1)
                             Timing.RunCoroutine(Playback(0));
@@ -294,7 +296,7 @@ namespace SCPSLAudioApi.AudioCore
                 }
                 else
                 {
-                    Log.Error($"Audio file {CurrentPlay} does not exist. skipping.");
+                    Logger.Error($"Audio file {CurrentPlay} does not exist. skipping.");
                     yield return Timing.WaitForSeconds(1);
                     if (AudioToPlay.Count >= 1)
                         Timing.RunCoroutine(Playback(0));
@@ -308,7 +310,7 @@ namespace SCPSLAudioApi.AudioCore
 
             if (VorbisReader.Channels >= 2)
             {
-                Log.Error($"Audio file {CurrentPlay} is not valid. Audio files must be mono.");
+                Logger.Error($"Audio file {CurrentPlay} is not valid. Audio files must be mono.");
                 yield return Timing.WaitForSeconds(1);
                 if (AudioToPlay.Count >= 1)
                     Timing.RunCoroutine(Playback(0));
@@ -319,7 +321,7 @@ namespace SCPSLAudioApi.AudioCore
 
             if (VorbisReader.SampleRate != 48000)
             {
-                Log.Error($"Audio file {CurrentPlay} is not valid. Audio files must have a SamepleRate of 48000");
+                Logger.Error($"Audio file {CurrentPlay} is not valid. Audio files must have a SamepleRate of 48000");
                 yield return Timing.WaitForSeconds(1);
                 if (AudioToPlay.Count >= 1)
                     Timing.RunCoroutine(Playback(0));
@@ -330,8 +332,10 @@ namespace SCPSLAudioApi.AudioCore
             OnTrackLoaded?.Invoke(this, index == -1, index, CurrentPlay);
 
             if (LogInfo)
-                Log.Info($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
-
+            {
+                Logger.Info($"Playing {CurrentPlay} with samplerate of {VorbisReader.SampleRate}");
+            }
+            
             samplesPerSecond = VoiceChatSettings.SampleRate * VoiceChatSettings.Channels;
             //_samplesPerSecond = VorbisReader.Channels * VorbisReader.SampleRate / 5;
             SendBuffer = new float[samplesPerSecond / 5 + HeadSamples];
@@ -360,8 +364,10 @@ namespace SCPSLAudioApi.AudioCore
             }
 
             if (LogInfo)
-                Log.Info($"Track Complete.");
-
+            {
+                Logger.Info("Track Complete.");
+            }
+            
             int nextQueuepos = 0;
             if (Continue && Loop && index == -1)
             {
@@ -393,7 +399,10 @@ namespace SCPSLAudioApi.AudioCore
             allowedSamples += Time.deltaTime * samplesPerSecond;
             int toCopy = Mathf.Min(Mathf.FloorToInt(allowedSamples), StreamBuffer.Count);
             if (LogDebug)
-                Log.Debug($"1 {toCopy} {allowedSamples} {samplesPerSecond} {StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
+            {
+                Logger.Debug($"1 {toCopy} {allowedSamples} {samplesPerSecond} {StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
+            }   
+            
             if (toCopy > 0)
             {
                 for (int i = 0; i < toCopy; i++)
@@ -403,8 +412,10 @@ namespace SCPSLAudioApi.AudioCore
             }
 
             if (LogDebug)
-                Log.Debug($"2 {toCopy} {allowedSamples} {samplesPerSecond} {StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
-
+            {
+                Logger.Debug($"2 {toCopy} {allowedSamples} {samplesPerSecond} {StreamBuffer.Count} {PlaybackBuffer.Length} {PlaybackBuffer.WriteHead}");
+            }
+            
             allowedSamples -= toCopy;
 
             while (PlaybackBuffer.Length >= 480)
